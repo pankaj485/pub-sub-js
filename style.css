@@ -13,12 +13,9 @@ main {
 }
 
 section {
-  display: flex;
+  display: grid;
+  grid-template-columns: 3fr 6fr;
   gap: 1rem;
-}
-
-aside {
-  width: 30%;
 }
 
 main {
@@ -26,20 +23,34 @@ main {
 }
 
 li {
-  padding: 0.2rem;
+  padding: 0.3rem 0.5rem;
   cursor: pointer;
+  width: 100%;
+  outline: 1px solid gray;
+  margin: 0.5rem auto;
+  margin-left: -1.5rem;
+  list-style: none;
 }
 
 #add-email {
   margin-bottom: 1rem;
 }
 
+#list-container {
+  max-height: 500px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+}
+
 @media (max-width: 600px) {
   section {
-    flex-direction: column;
+    grid-template-columns: repeat(1, 1fr);
+  }
+  aside {
+    width: 100%;
   }
 
-  aside {
+  li {
     width: 100%;
   }
 }

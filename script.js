@@ -88,7 +88,7 @@ const viewEmailContent = (data) => {
   const emailBody = document.getElementById("email-body");
 
   emailTitle.innerText = firstEmail.title;
-  emailBody.innerText = firstEmail.body;
+  emailBody.innerHTML = firstEmail.body;
 };
 
 // add a new email to the email list
@@ -108,3 +108,12 @@ document.getElementById("add-email").addEventListener("click", (e) => {
 app.subscribe(renderEmailList);
 app.subscribe(renderInboxCount);
 app.subscribe(viewEmailContent);
+
+for (let i = 1; i <= 5; i++) {
+  app.addMessage({
+    id: i,
+    title: "Message " + i,
+    body: `This is the message having title: <b>Message ${i}</b>`,
+    unread: Math.random() > 0.5,
+  });
+}
