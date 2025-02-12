@@ -2,6 +2,8 @@ class App {
   // 	using private property for messages in order to keep encapsulation
   #messages = [];
   #currentMessage = null;
+  #totalGenerateMails = 0;
+
   /* 
     Data CRUD operations
   */
@@ -10,6 +12,9 @@ class App {
   addMessage(message) {
     this.#messages.push(message);
     this.#publish();
+    this.#totalGenerateMails += 1;
+
+    console.log("mails generated: ", this.#totalGenerateMails);
   }
 
   // deleteMessage:  delete a message from the list and publish updated data
@@ -76,6 +81,10 @@ class App {
   get currentMessage() {
     return this.#currentMessage;
   }
+
+  get totalGenerateMails() {
+    return this.#totalGenerateMails;
+  }
 }
 
 // Create a new instance of the App class to implemnet pub/sub model
@@ -135,11 +144,11 @@ const viewEmailContent = (data) => {
 // add a new email to the email list
 document.getElementById("add-email").addEventListener("click", (e) => {
   e.preventDefault();
-  const newMessageId = app.data.length + 1;
+  const messageId = app.totalGenerateMails + 1;
   const newMessage = {
-    id: newMessageId,
-    title: "Message " + newMessageId,
-    body: `This is the message having title: <b>Message ${newMessageId}</b>`,
+    id: messageId,
+    title: "Message " + messageId,
+    body: `This is the message having title: <b>Message ${messageId}</b>`,
     unread: Math.random() > 0.5,
   };
   app.addMessage(newMessage);
@@ -159,10 +168,13 @@ app.subscribe(renderInboxCount);
 app.subscribe(viewEmailContent);
 
 for (let i = 1; i <= 5; i++) {
-  app.addMessage({
-    id: i,
-    title: "Message " + i,
-    body: `This is the message having title: <b>Message ${i}</b>`,
+  const messageId = app.totalGenerateMails + 1;
+  const newMessage = {
+    id: messageId,
+    title: "Message " + messageId,
+    body: `This is the message having title: <b>Message ${messageId}</b>`,
     unread: Math.random() > 0.5,
-  });
+  };
+
+  app.addMessage(newMessage);
 }
