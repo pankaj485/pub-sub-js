@@ -2,7 +2,7 @@ class App {
   // 	using private property for messages in order to keep encapsulation
   #messages = [];
   #currentMessage = null;
-  #totalGenerateMails = 0;
+  #totalMailsGenerated = 0;
 
   /* 
     Data CRUD operations
@@ -12,9 +12,7 @@ class App {
   addMessage(message) {
     this.#messages.push(message);
     this.#publish();
-    this.#totalGenerateMails += 1;
-
-    console.log("mails generated: ", this.#totalGenerateMails);
+    this.#totalMailsGenerated += 1;
   }
 
   // deleteMessage:  delete a message from the list and publish updated data
@@ -83,7 +81,7 @@ class App {
   }
 
   get totalGenerateMails() {
-    return this.#totalGenerateMails;
+    return this.#totalMailsGenerated;
   }
 }
 
