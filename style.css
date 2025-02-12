@@ -55,9 +55,6 @@ section {
   section {
     grid-template-columns: repeat(1, 1fr);
   }
-  aside {
-    width: 100%;
-  }
 
   li {
     width: 100%;
