@@ -2,7 +2,6 @@ class App {
   // 	using private property for messages in order to keep encapsulation
   #messages = [];
   #currentMessage = null;
-
   /* 
     Data CRUD operations
   */
@@ -37,7 +36,17 @@ class App {
   }
 
   setCurrentMessage(message) {
+    if (this.#currentMessage) {
+      const currentId = this.currentMessage.id;
+      document
+        .getElementById(`email-title-${currentId}`)
+        ?.classList.remove("current-title");
+    }
+
     this.#currentMessage = message;
+    document
+      .getElementById(`email-title-${message.id}`)
+      ?.classList.add("current-title");
   }
 
   /* 
@@ -83,11 +92,12 @@ const renderEmailList = (data) => {
 
   data.forEach((message) => {
     const { unread, title } = message;
-    let li = document.createElement("li");
-    ulContainer.appendChild(li);
+    let p = document.createElement("p");
+    p.setAttribute("id", `email-title-${message.id}`);
+    ulContainer.appendChild(p);
 
-    li.innerHTML = unread ? `<b>${title}</b><span> (unread)</span>` : title;
-    li.addEventListener("click", (e) => {
+    p.innerHTML = unread ? `<b>${title}</b><span> (unread)</span>` : title;
+    p.addEventListener("click", (e) => {
       e.preventDefault();
       app.markMessageAsRead(message.id);
       app.setCurrentMessage(message);
