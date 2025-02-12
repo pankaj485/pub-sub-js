@@ -1,0 +1,45 @@
+html {
+  color-scheme: dark;
+}
+
+aside,
+main {
+  outline: 1px solid gray;
+  padding: 0.5rem;
+}
+
+main {
+  padding: 1rem;
+}
+
+section {
+  display: flex;
+  gap: 1rem;
+}
+
+aside {
+  width: 30%;
+}
+
+main {
+  flex-grow: 1;
+}
+
+li {
+  padding: 0.2rem;
+  cursor: pointer;
+}
+
+#add-email {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  section {
+    flex-direction: column;
+  }
+
+  aside {
+    width: 100%;
+  }
+}
