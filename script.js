@@ -16,40 +16,45 @@ class App {
   }
 
   // deleteMessage:  delete a message from the list and publish updated data
-  deleteMessage(id) {
+  deleteMessage() {
+    const targetMessageId = this.#currentMessage?.id;
     const currentMessages = [...this.data];
-    const index = currentMessages.findIndex((_) => _.id === id);
+    const index = currentMessages.findIndex((_) => _.id === targetMessageId);
 
     // remove the message from the list
     currentMessages.splice(index, 1);
     this.#messages = currentMessages;
 
+    // set selected to default (first message)
+    this.#currentMessage = null;
+
     this.#publish();
   }
 
   // markMessageAsRead:  set unread flag to false for the requested message and publish updated data
-  markMessageAsRead(messageId) {
-    // find the requested mesage from messge id
-    const requestedMessage = this.#messages.find(
-      (message) => message.id === messageId
+  markMessageAsRead() {
+    const targetMessageId = this.#currentMessage?.id;
+    // 1. find the requested mesage from messge id
+    // 2. set unread flag to false for the requested mesasge
+    const selectedMessage = this.#messages.find(
+      (message) => message.id === targetMessageId
     );
-    // set unread flag to false for the requested mesasge
-    requestedMessage["unread"] = false;
+    selectedMessage["unread"] = false;
     this.#publish(this.data);
   }
 
   setCurrentMessage(message) {
-    if (this.#currentMessage) {
-      const currentId = this.currentMessage.id;
+    if (this.currentMessage) {
       document
-        .getElementById(`email-title-${currentId}`)
-        ?.classList.remove("current-title");
+        .getElementById(`email-title-${this.currentMessage.id}`)
+        .classList.remove("current-title");
     }
 
     this.#currentMessage = message;
+
     document
-      .getElementById(`email-title-${message.id}`)
-      ?.classList.add("current-title");
+      .getElementById(`email-title-${this.currentMessage.id}`)
+      .classList.add("current-title");
   }
 
   /* 
@@ -106,11 +111,17 @@ const renderEmailList = (data) => {
     p.innerHTML = unread ? `<b>${title}</b><span> (unread)</span>` : title;
     p.addEventListener("click", (e) => {
       e.preventDefault();
-      app.markMessageAsRead(message.id);
       app.setCurrentMessage(message);
-      viewEmailContent([message]);
+      app.markMessageAsRead();
+      viewEmailContent();
     });
   });
+
+  if (app.currentMessage?.id) {
+    document
+      .getElementById(`email-title-${app?.currentMessage?.id}`)
+      .classList.add("current-title");
+  }
 };
 
 // renderInboxCount:  render the total number of unread mails
@@ -121,22 +132,28 @@ const renderInboxCount = (data) => {
 };
 
 // viewEmailContent:  render the content of clicked email in the email list
-const viewEmailContent = (data) => {
-  const firstEmail = data[0];
+const viewEmailContent = () => {
+  const data = app.data;
   const emailTitle = document.getElementById("email-title");
   const emailBody = document.getElementById("email-body");
 
-  if (!firstEmail) {
+  if (!data.length) {
     app.setCurrentMessage(null);
     emailTitle.innerText = "";
-    emailBody.innerHTML = "";
-
+    emailBody.innerText = "";
     return;
   }
 
-  app.setCurrentMessage(firstEmail);
-  emailTitle.innerText = firstEmail.title;
-  emailBody.innerHTML = firstEmail.body;
+  if (!app.currentMessage) {
+    app.setCurrentMessage(data[0]);
+  }
+
+  const targetMessage = data.find(
+    (message) => message.id === app.currentMessage.id
+  );
+
+  emailTitle.innerText = targetMessage.title;
+  emailBody.innerHTML = targetMessage.body;
 };
 
 // add a new email to the email list
@@ -156,7 +173,7 @@ document.getElementById("delete-mail-btn").addEventListener("click", (e) => {
   e.preventDefault();
 
   if (app.currentMessage) {
-    app.deleteMessage(app.currentMessage.id);
+    app.deleteMessage();
   }
 });
 
