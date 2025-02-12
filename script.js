@@ -1,6 +1,7 @@
 class App {
   // 	using private property for messages in order to keep encapsulation
   #messages = [];
+  #currentMessage = null;
 
   /* 
     Data CRUD operations
@@ -9,7 +10,19 @@ class App {
   //  addMessage:  add a new message and publish updated data
   addMessage(message) {
     this.#messages.push(message);
-    this.#publish(this.data);
+    this.#publish();
+  }
+
+  // deleteMessage:  delete a message from the list and publish updated data
+  deleteMessage(id) {
+    const currentMessages = [...this.data];
+    const index = currentMessages.findIndex((_) => _.id === id);
+
+    // remove the message from the list
+    currentMessages.splice(index, 1);
+    this.#messages = currentMessages;
+
+    this.#publish();
   }
 
   // markMessageAsRead:  set unread flag to false for the requested message and publish updated data
@@ -21,6 +34,10 @@ class App {
     // set unread flag to false for the requested mesasge
     requestedMessage["unread"] = false;
     this.#publish(this.data);
+  }
+
+  setCurrentMessage(message) {
+    this.#currentMessage = message;
   }
 
   /* 
@@ -46,6 +63,10 @@ class App {
   get data() {
     return [...this.#messages];
   }
+
+  get currentMessage() {
+    return this.#currentMessage;
+  }
 }
 
 // Create a new instance of the App class to implemnet pub/sub model
@@ -69,6 +90,7 @@ const renderEmailList = (data) => {
     li.addEventListener("click", (e) => {
       e.preventDefault();
       app.markMessageAsRead(message.id);
+      app.setCurrentMessage(message);
       viewEmailContent([message]);
     });
   });
@@ -87,6 +109,15 @@ const viewEmailContent = (data) => {
   const emailTitle = document.getElementById("email-title");
   const emailBody = document.getElementById("email-body");
 
+  if (!firstEmail) {
+    app.setCurrentMessage(null);
+    emailTitle.innerText = "";
+    emailBody.innerHTML = "";
+
+    return;
+  }
+
+  app.setCurrentMessage(firstEmail);
   emailTitle.innerText = firstEmail.title;
   emailBody.innerHTML = firstEmail.body;
 };
@@ -102,6 +133,14 @@ document.getElementById("add-email").addEventListener("click", (e) => {
     unread: Math.random() > 0.5,
   };
   app.addMessage(newMessage);
+});
+
+document.getElementById("delete-mail-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+
+  if (app.currentMessage) {
+    app.deleteMessage(app.currentMessage.id);
+  }
 });
 
 // add subscribers functions to the app instance
